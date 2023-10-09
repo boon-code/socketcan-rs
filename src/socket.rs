@@ -180,7 +180,7 @@ fn c_timeval_new(t: Duration) -> timeval {
 
 /// Tries to open the CAN socket by the interface number.
 fn raw_open_socket(addr: &CanAddr) -> io::Result<c_int> {
-    let fd = unsafe { libc::socket(PF_CAN, SOCK_RAW, CAN_RAW) };
+    let fd = unsafe { libc::socket(PF_CAN, SOCK_RAW, get_raw_protocol()) };
 
     if fd == -1 {
         return Err(io::Error::last_os_error());
@@ -194,6 +194,17 @@ fn raw_open_socket(addr: &CanAddr) -> io::Result<c_int> {
         Err(err)
     } else {
         Ok(fd)
+    }
+}
+
+fn get_raw_protocol() -> c_int {
+    if cfg!(custom_can_raw) {
+        std::env::var("SOCKETCAN_RS_CAN_RAW")
+            .ok()
+            .and_then(|v| v.parse().ok())
+            .unwrap_or(CAN_RAW)
+    } else {
+        CAN_RAW
     }
 }
 

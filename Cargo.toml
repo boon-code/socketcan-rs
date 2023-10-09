@@ -32,6 +32,7 @@ vcan_tests = ["netlink"]
 utils = ["clap", "anyhow"]
 tokio = ["dep:tokio", "mio", "futures"]
 async-std = ["dep:async-std", "dep:async-io"]
+custom_can_raw = []
 
 [dependencies]
 embedded-can = "0.4"
